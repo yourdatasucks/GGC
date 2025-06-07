@@ -121,7 +121,7 @@ fun GnomeCameraApp() {
     // Flash animation effect
     LaunchedEffect(isFlashActive) {
         if (isFlashActive) {
-            delay(100) // Flash duration
+            delay(200) // Flash duration
             isFlashActive = false
         }
     }
@@ -151,11 +151,11 @@ fun GnomeCameraApp() {
 
             // Gnome Video Overlay
             if (showGnomeVideo) {
-                // Black background to block camera preview
+                // white background to block camera preview
                 Box(
                     modifier = Modifier
                         .fillMaxSize()
-                        .background(Color.Black)
+                        .background(Color.White)
                 ) {
                     GnomeVideoOverlay(
                         modifier = Modifier.fillMaxSize(),
@@ -173,7 +173,7 @@ fun GnomeCameraApp() {
                 Box(
                     modifier = Modifier
                         .fillMaxSize()
-                        .background(Color.White.copy(alpha = 0.8f))
+                        .background(Color.White.copy(alpha = 0.9f))
                 )
             }
 
@@ -181,13 +181,12 @@ fun GnomeCameraApp() {
             if (!showGnomeVideo) {
                 CameraControls(
                     onCaptureClick = {
-                        // Trigger flash effect
+                        isRecordingReaction = true
                         isFlashActive = true
                         // Start gnome reveal and reaction recording after short delay
                         coroutineScope.launch {
-                            delay(500) // Wait for flash to finish
+                            delay(10) // start video while flash is active
                             showGnomeVideo = true
-                            isRecordingReaction = true // Start recording reaction
                         }
                     },
                     onFlipCamera = { isFrontCamera = !isFrontCamera },
@@ -370,7 +369,7 @@ fun GnomeVideoOverlay(
     // Create ExoPlayer that survives configuration changes
     val exoPlayer = remember(key1 = "gnome_player") {
         ExoPlayer.Builder(context).build().apply {
-            val mediaItem = MediaItem.fromUri("android.resource://${context.packageName}/${R.raw.gnomed}")
+            val mediaItem = MediaItem.fromUri("android.resource://${context.packageName}/${R.raw.gnomed_cut}")
             setMediaItem(mediaItem)
             prepare()
             playWhenReady = true
@@ -428,7 +427,7 @@ fun GnomeVideoOverlay(
                 setShowBuffering(PlayerView.SHOW_BUFFERING_NEVER)
                 resizeMode = AspectRatioFrameLayout.RESIZE_MODE_FIT
                 setKeepContentOnPlayerReset(false)
-                setBackgroundColor(android.graphics.Color.BLACK)
+                setBackgroundColor(android.graphics.Color.parseColor("#FFFAFAFA"))
             }
         },
         update = { playerView ->
